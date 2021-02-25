@@ -106,10 +106,16 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64, params ...[]float64) (c, yC, a
 //	c is the zero
 //	yC is the function value evaluated at c
 //	absErr is the error of the approximation
-func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int) (c, yC, absErr float64, err error) {
+func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int, params ...[]float64) (c, yC, absErr float64, err error) {
 	var dx, ac float64
-	ya := y(a)
-	yb := y(b)
+	var ya, yb float64
+	if params != nil {
+		ya = y(a, params[0])
+		yb = y(b, params[0])
+	} else {
+		ya = y(a)
+		yb = y(b)
+	}
 	if ya*yb > 0 {
 		err = errors.New("The signs of a and b are not different")
 		return 0, 0, 0, err
@@ -118,7 +124,11 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int) (c, yC, ab
 		dx = yb * (b - a) / (yb - ya)
 		c = b - dx
 		ac = c - a
-		yC = y(c)
+		if params != nil {
+			yC = y(c, params[0])
+		} else {
+			yC = y(c)
+		}
 		if yC == 0 {
 			return c, yC, absErr, nil
 		} else if yb*yC > 0 {
