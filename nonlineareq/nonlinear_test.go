@@ -6,14 +6,14 @@ import (
 )
 
 func TestFixedPoint(t *testing.T) {
-	var funcToEval YEqFuncx = func(x float64) float64 {
+	var funcToEval YEqFuncx = func(x float64, params ...[]float64) float64 {
 		return -4 + 4*x - (1.0/2.0)*math.Pow(x, 2)
 	}
 	_, pAprox, _, _, _, _ := FixPt(funcToEval, 3.8, 10, 50) //this test case converges to 4
 	if pAprox != 4 {
 		t.Errorf("The result %f is different to 4", pAprox)
 	}
-	var funcToEval2 YEqFuncx = func(x float64) float64 {
+	var funcToEval2 YEqFuncx = func(x float64, params ...[]float64) float64 {
 		return 0.5*x + 1.5
 	}
 	_, _, absErr, relErr, _, _ := FixPt(funcToEval2, 4, 10, 50) //this test case converges to 3, but with decimals (not an exact solution). The ok trigger commes from the errors (relative) being lower than the tolerance
@@ -23,7 +23,7 @@ func TestFixedPoint(t *testing.T) {
 }
 
 func TestBisect(t *testing.T) {
-	var funcToEval YEqFuncx = func(x float64) float64 {
+	var funcToEval YEqFuncx = func(x float64, params ...[]float64) float64 {
 		return x*math.Sin(x) - 1
 	}
 	c, _, _, _ := BisectBolzano(funcToEval, 0, 2, 0.01)

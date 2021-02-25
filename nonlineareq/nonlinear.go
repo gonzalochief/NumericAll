@@ -6,8 +6,9 @@ import (
 )
 
 //YEqFuncx function type is used to create y=f(x) type of functions
-//the params ..float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
-type YEqFuncx func(x float64) float64
+//the params ..[]float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
+//for example: a*x+b*x+c*x² should receive a float array of the form [a, b, c], and the fuction shoud be of the form params[0][0]*x+params[0][1]*x+params[0][3]*x²
+type YEqFuncx func(x float64, params ...[]float64) float64
 
 //FixPt estimates the solution to the equation x = g(x) using the p(n+1) = g(p(n)) iteration, which is estimated based on an initial point
 //Inputs:
@@ -21,13 +22,17 @@ type YEqFuncx func(x float64) float64
 //	errAprox Absolute error
 //	relErr relative error
 //	pSeries fixed point iterations
-func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int) (i int, pAprox, errAprox, relErr float64, pSeries []float64, err error) {
+func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int, params ...[]float64) (i int, pAprox, errAprox, relErr float64, pSeries []float64, err error) {
 	var TolDec float64
 	TolDec = float64(1) / math.Pow10(tol)
 	epsilon := (math.Nextafter(1, 2) - 1)
 	pSeries = append(pSeries, p0)
 	for i = 1; i <= maxIter; i++ {
-		pSeries = append(pSeries, y(pSeries[i-1]))
+		if params != nil {
+			pSeries = append(pSeries, y(pSeries[i-1], params[0]))
+		} else {
+			pSeries = append(pSeries, y(pSeries[i-1]))
+		}
 		errAprox = math.Abs(pSeries[i] - pSeries[i-1])
 		relErr = errAprox / (math.Abs(pSeries[i]) + epsilon)
 		pAprox = pSeries[i]
