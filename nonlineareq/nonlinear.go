@@ -54,10 +54,16 @@ func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int, params ...[]float64) (i
 //	c is the zero
 //	yC is the function value evaluated at c
 //	absErr is the error of the approximation
-func BisectBolzano(y YEqFuncx, a, b, tol float64) (c, yC, absErr float64, err error) {
+func BisectBolzano(y YEqFuncx, a, b, tol float64, params ...[]float64) (c, yC, absErr float64, err error) {
 	var i int
-	ya := y(a)
-	yb := y(b)
+	var ya, yb float64
+	if params != nil {
+		ya = y(a, params[0])
+		yb = y(b, params[0])
+	} else {
+		ya = y(a)
+		yb = y(b)
+	}
 	if ya*yb > 0 {
 		err = errors.New("The signs of a and b are not different")
 		return 0, 0, 0, err
@@ -65,7 +71,11 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64) (c, yC, absErr float64, err er
 	maxIter := 1 + math.Round((math.Log(b-a)-math.Log(tol))/math.Log(2))
 	for i = 0; i < int(maxIter); i++ {
 		c = (a + b) / 2
-		yC = y(c)
+		if params != nil {
+			yC = y(c, params[0])
+		} else {
+			yC = y(c)
+		}
 		if yC == 0 {
 			a = c
 			b = c

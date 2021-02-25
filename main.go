@@ -30,14 +30,14 @@ func main() {
 	fmt.Println("error aprox.: ", errApr)
 	fmt.Println("relative err: ", relErr)
 	fmt.Println("p slice: ", pSlice)
-	/*
-		var funcToEval3 nonlineareq.YEqFuncx = func(x float64, params ...[]float64) float64 {
-			return x*math.Sin(x) - 1
-		}
-		fmt.Println("evaluada: ", funcToEval3(0))
-		c, yC, errApr, _ := nonlineareq.BisectBolzano(funcToEval3, 0, 2, 0.01)
-		fmt.Println("c: ", c)
-		fmt.Println("yC aprox.: ", yC)
-		fmt.Println("error aprox.: ", errApr)
-	*/
+
+	var funcToEval3 nonlineareq.YEqFuncx = func(x float64, params ...[]float64) float64 {
+		return x*math.Sin(x) - 1
+	}
+	fmt.Println("evaluada: ", funcToEval3(0))
+	c, yC, errApr, _ := nonlineareq.BisectBolzano(funcToEval3, 0, 2, 0.01)
+	fmt.Println("c: ", c)
+	fmt.Println("yC aprox.: ", yC)
+	fmt.Println("error aprox.: ", errApr)
+
 }
