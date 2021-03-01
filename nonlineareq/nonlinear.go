@@ -16,6 +16,7 @@ type YEqFuncx func(x float64, params ...[]float64) float64
 //	p0 is the starting point
 //	tol is the tolerance in decimal places
 //	maxIter is the maximum number of allowed iterations
+//	the params ..[]float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
 //Outputs:
 //	i last iteration
 //	pAprox fixed point approximation
@@ -50,6 +51,7 @@ func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int, params ...[]float64) (i
 //	y is the function function
 //	a and b are the left and right extreme values of the interval
 //	tol is the tolerance
+//	the params ..[]float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
 //Outputs:
 //	c is the zero
 //	yC is the function value evaluated at c
@@ -102,6 +104,7 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64, params ...[]float64) (c, yC, a
 //	a and b are the left and right extreme values of the interval
 //	tol is the tolerance for the zero
 //	epsilon is the tolerance for f(c)
+//	the params ..[]float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
 //Outputs:
 //	c is the zero
 //	yC is the function value evaluated at c
@@ -120,7 +123,7 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int, params ...
 		err = errors.New("The signs of a and b are not different")
 		return 0, 0, 0, err
 	}
-	for i := 0; i < int(maxIter); i++ {
+	for i := 0; i < maxIter; i++ {
 		dx = yb * (b - a) / (yb - ya)
 		c = b - dx
 		ac = c - a
@@ -130,7 +133,7 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int, params ...
 			yC = y(c)
 		}
 		if yC == 0 {
-			return c, yC, absErr, nil
+			return c, yC, math.Abs(dx), nil
 		} else if yb*yC > 0 {
 			b = c
 			yb = yC
@@ -140,9 +143,25 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int, params ...
 		}
 		dx = math.Min(math.Abs(dx), ac)
 		if (math.Abs(dx) < tol) || (math.Abs(yC) < epsilon) {
-			return c, yC, absErr, nil
+			return c, yC, math.Abs(dx), nil
 		}
 	}
 	err = errors.New("Maximum number of iretations reached")
 	return 0, 0, 0, err
+}
+
+func NewtonRaphson(y, dy YEqFuncx, p0, tol, epsilon float64, maxIter int, params ...[]float64) (c, yC, absErr float64, k int, err error) {
+	var p1, relErr float64
+	for i := 0; i < maxIter; i++ {
+		p1 = p0 - y(p0, params[0], params[1])/dy(p0, params[0], params[1])
+		absErr = math.Abs(p1 - p0)
+		relErr = 2 * absErr / (math.Abs(p1) + tol)
+		p0 = p1
+		yC = y(p0, params[0], params[1])
+		if (absErr < tol) || (relErr < tol) || (math.Abs(yC) < epsilon) {
+			return p0, yC, absErr, i, nil
+		}
+	}
+	err = errors.New("Maximum number of iretations reached")
+	return 0, 0, 0, 0, err
 }

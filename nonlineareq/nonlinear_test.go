@@ -31,3 +31,13 @@ func TestBisect(t *testing.T) {
 		t.Errorf("The result %f is different to 1.11328125", c)
 	}
 }
+
+func TestRegulafalsi(t *testing.T) {
+	var funcToEval YEqFuncx = func(x float64, params ...[]float64) float64 {
+		return x*math.Sin(x) - 1
+	}
+	c, _, _, _ := RegulaFalsi(funcToEval, 0, 2, 0.001, 0.001, 50)
+	if c != 1.1141611949626338 {
+		t.Errorf("The result %f is different to 1.11328125", c)
+	}
+}

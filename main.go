@@ -31,6 +31,7 @@ func main() {
 	fmt.Println("relative err: ", relErr)
 	fmt.Println("p slice: ", pSlice)
 
+	fmt.Println("Bisection method")
 	var funcToEval3 nonlineareq.YEqFuncx = func(x float64, params ...[]float64) float64 {
 		return x*math.Sin(x) - 1
 	}
@@ -39,5 +40,48 @@ func main() {
 	fmt.Println("c: ", c)
 	fmt.Println("yC aprox.: ", yC)
 	fmt.Println("error aprox.: ", errApr)
+
+	fmt.Println("Regula Falsi method")
+	c, yC, errApr, _ = nonlineareq.RegulaFalsi(funcToEval3, 0, 2, 0.001, 0.001, 50)
+	fmt.Println("c: ", c)
+	fmt.Println("yC aprox.: ", yC)
+	fmt.Println("error aprox.: ", errApr)
+
+	var irrFunc nonlineareq.YEqFuncx = func(x float64, params ...[]float64) float64 {
+		lenFcf := len(params[0])
+		var npv float64 = 0
+		for i := range params[0] {
+			if i == lenFcf-1 {
+				npv += params[0][i]/math.Pow(1+x, float64(i)) + params[1][0]/math.Pow(1+x, float64(lenFcf))
+			} else {
+				npv += params[0][i] / math.Pow(1+x, float64(i))
+			}
+		}
+		return npv
+	}
+
+	var dxirrFunc nonlineareq.YEqFuncx = func(x float64, params ...[]float64) float64 {
+		lenFcf := len(params[0])
+		var npv float64 = 0
+		for i := range params[0] {
+			if i == lenFcf-1 {
+				npv += -(float64(i)*params[0][i])/math.Pow(1+x, float64(i)+1) - (float64(lenFcf)*params[1][0])/math.Pow(1+x, float64(lenFcf)+1)
+			} else {
+				npv += -(float64(i) * params[0][i]) / math.Pow(1+x, float64(i)+1)
+			}
+		}
+		return npv
+	}
+
+	fmt.Println("Newton-Raphson method IRR")
+	var fcf = []float64{-1000, 10, 10, 10, 10, 10, 10, 2000}
+	var tv = []float64{100}
+	fmt.Println("NPV: ", irrFunc(0.0, fcf, tv))
+	fmt.Println("NPV: ", irrFunc(0.1177410, fcf, tv))
+	c, yC, errApr, k, _ := nonlineareq.NewtonRaphson(irrFunc, dxirrFunc, 0.0, 0.000001, 0.00000001, 50, fcf, tv)
+	fmt.Println("c: ", c)
+	fmt.Println("yC aprox.: ", yC)
+	fmt.Println("error aprox.: ", errApr)
+	fmt.Println("iterations: ", k)
 
 }
