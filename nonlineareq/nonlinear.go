@@ -48,7 +48,7 @@ func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int, params ...[]float64) (i
 //BisectBolzano estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Bolzano's Bisection Method
 //The method only works if the values of f(a) and f(b) have different signs
 //Inputs:
-//	y is the function function
+//	y is the function to be solved
 //	a and b are the left and right extreme values of the interval
 //	tol is the tolerance
 //	the params ..[]float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
@@ -100,7 +100,7 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64, params ...[]float64) (c, yC, a
 //RegulaFalsi estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Régula Falsi Method
 //The method only works if the values of f(a) and f(b) have different signs
 //Inputs:
-//	y is the function function
+//	y is the function to be solved
 //	a and b are the left and right extreme values of the interval
 //	tol is the tolerance for the zero
 //	epsilon is the tolerance for f(c)
@@ -150,14 +150,30 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int, params ...
 	return 0, 0, 0, err
 }
 
+//NewtonRaphson estimates the value of x that makes the function equal to 0 from an initial value of x using the iteration:
+// x1 = x0 - f(x0)/f'(x0)
+//Inputs:
+//	y is the function to be solved
+//	dy is the first derivative ov the function to be solved
+//	p0 is the initial approximation to the value of x (a 0 of y)
+//	tol is the tolerance for the zero
+//	epsilon is the tolerance for f(c)
+//	maxIter is the maximum number of iterations for the method
+//	the params ..[]float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
+//	params have to be in the form of a single []float64 slice. The use of such parameters can be defined when defining both the function, and its derivative
+//Outputs:
+//	c is the zero
+//	yC is the function value evaluated at c
+//	absErr is the error of the approximation
+//	k is the number of iterations reached when estimating the zero (c)
 func NewtonRaphson(y, dy YEqFuncx, p0, tol, epsilon float64, maxIter int, params ...[]float64) (c, yC, absErr float64, k int, err error) {
 	var p1, relErr float64
 	for i := 0; i < maxIter; i++ {
-		p1 = p0 - y(p0, params[0], params[1])/dy(p0, params[0], params[1])
+		p1 = p0 - y(p0, params[0])/dy(p0, params[0])
 		absErr = math.Abs(p1 - p0)
 		relErr = 2 * absErr / (math.Abs(p1) + tol)
 		p0 = p1
-		yC = y(p0, params[0], params[1])
+		yC = y(p0, params[0])
 		if (absErr < tol) || (relErr < tol) || (math.Abs(yC) < epsilon) {
 			return p0, yC, absErr, i, nil
 		}
