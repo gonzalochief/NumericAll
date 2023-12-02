@@ -20,6 +20,16 @@ func main() {
 	fmt.Println("relative err: ", relErr)
 	fmt.Println("p slice: ", pSlice)
 
+	funcToEval = func(x float64) float64 {
+		return math.Sqrt(6 + x)
+	}
+	i, pApr, errApr, relErr, pSlice, _ = nonlineareq.FixPt(funcToEval, 7, 5, 50)
+	fmt.Println("i: ", i)
+	fmt.Println("p aprox.: ", pApr)
+	fmt.Println("error aprox.: ", errApr)
+	fmt.Println("relative err: ", relErr)
+	fmt.Println("p slice: ", pSlice)
+
 	var funcToEval2 nonlineareq.YEqFuncx = func(x float64) float64 {
 		return 0.5*x + 1.5
 	}

@@ -35,15 +35,18 @@ func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int) (i int, pAprox, errApro
 			return i, pAprox, errAprox, relErr, pSeries, nil
 		}
 	}
-	err = errors.New("Maximum number of iretations reached")
+	err = errors.New("maximum number of iretations reached")
 	return 0, 0, 0, 0, nil, err
 }
 
 //BisectBolzano estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Bolzano's Bisection Method
 //The method only works if the values of f(a) and f(b) have different signs
 //Inputs:
-//	y is the function function
-//	a and b are the left and right extreme values of the interval
+//	y is a function of the form:
+//     f(x) = expression
+//  that has been reexpressed as 0 = expression - f(x)
+//
+//  a and b are the left and right extreme values of the interval
 //	tol is the tolerance
 //Outputs:
 //	c is the zero
@@ -54,7 +57,7 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64) (c, yC, absErr float64, err er
 	ya := y(a)
 	yb := y(b)
 	if ya*yb > 0 {
-		err = errors.New("The signs of a and b are not different")
+		err = errors.New("the signs of a and b are not different")
 		return 0, 0, 0, err
 	}
 	maxIter := 1 + math.Round((math.Log(b-a)-math.Log(tol))/math.Log(2))
@@ -73,10 +76,10 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64) (c, yC, absErr float64, err er
 		}
 		if (b - a) < tol {
 			c = (a + b) / 2
-			return c, math.Abs(b - a), y(c), nil
+			return c, y(c), math.Abs(b - a), nil
 		}
 	}
-	err = errors.New("Maximum number of iretations reached")
+	err = errors.New("maximum number of iretations reached")
 	return 0, 0, 0, err
 }
 
@@ -96,10 +99,10 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int) (c, yC, ab
 	ya := y(a)
 	yb := y(b)
 	if ya*yb > 0 {
-		err = errors.New("The signs of a and b are not different")
+		err = errors.New("the signs of a and b are not different")
 		return 0, 0, 0, err
 	}
-	for i := 0; i < int(maxIter); i++ {
+	for i := 0; i < maxIter; i++ {
 		dx = yb * (b - a) / (yb - ya)
 		c = b - dx
 		ac = c - a
@@ -118,6 +121,65 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int) (c, yC, ab
 			return c, yC, absErr, nil
 		}
 	}
-	err = errors.New("Maximum number of iretations reached")
+	err = errors.New("maximum number of iretations reached")
 	return 0, 0, 0, err
 }
+
+//NewtonRaphson estimates the value of x that makes the function equal to 0 using the Newton-Raphson Method
+//Inputs:
+//	y is the function function y=f(x)
+//	dy is the dirivative of the function function y
+//	p0 is the initial point for the zero approximation
+//	delta is the tolerance for the zero
+//	epsilon is the tolerance for f(c)
+//  maxIter is the maximum iteration for the algorithm
+//Outputs:
+//	zeroApr is the approximation to the zero (P0)
+//	yC is the function value evaluated at P0
+//	absErr is the error of the approximation
+//	i is the iteration that generated the approximation
+func NewtonRaphson(y, dy YEqFuncx, p0, delta, epsilon float64, maxIter int) (zeroApr, yZero, absErr float64, i int, err error) {
+	for i = 0; i < maxIter; i++ {
+		p1 := p0 - y(p0)/dy(p0)
+		absErr = math.Abs(p1 - p0)
+		relErr := 2 * absErr / (math.Abs(p1) + delta)
+		p0 = p1
+		yP0 := y(p0)
+		if (absErr < delta) || (relErr < delta) || (math.Abs(yP0) < epsilon) {
+			return p0, yP0, absErr, i, nil
+		}
+	}
+	return math.NaN(), math.NaN(), math.NaN(), i, errors.New("maximum iteration reached")
+}
+
+//Secant estimates the value of x that makes the function equal to 0 using the Secant Method
+//Inputs:
+//	y is the function function y=f(x)
+//	dy is the dirivative of the function function y
+//	p0 and P1 are the initial point for the zero approximation
+//	delta is the tolerance for the zero
+//	epsilon is the tolerance for f(c)
+//  maxIter is the maximum iteration for the algorithm
+//Outputs:
+//	zeroApr is the approximation to the zero (P0)
+//	yC is the function value evaluated at P0
+//	absErr is the error of the approximation
+//	i is the iteration that generated the approximation
+func Secant(y YEqFuncx, p0, p1, delta, epsilon float64, maxIter int) (zeroApr, yZero, absErr float64, i int, err error) {
+	for i = 0; i < maxIter; i++ {
+		p2 := p1 - y(p1)*(p1-p0)/(y(p1)-y(p0))
+		absErr = math.Abs(p2 - p1)
+		relErr := 2 * absErr / (math.Abs(p2) + delta)
+		p0 = p1
+		p1 = p2
+		yZero = y(p1)
+		if (absErr < delta) || (relErr < delta) || (math.Abs(yZero) < epsilon) {
+			return p1, yZero, absErr, i, nil
+		}
+	}
+	return math.NaN(), math.NaN(), math.NaN(), i, errors.New("maximum iteration reached")
+}
+
+func Steffensen() {}
+
+func Muller() {}
