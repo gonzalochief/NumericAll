@@ -6,6 +6,7 @@ import (
 )
 
 var ErrMaxIter = errors.New("maximum number of iretations reached")
+var ErrFuncSignNotEqual = errors.New("the signs of y(a) and y(b) are not different")
 
 // YEqFuncx function type is used to create y=f(x) type of functions
 // the params ..float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
@@ -63,8 +64,7 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64) (c, yC, absErr float64, err er
 	ya := y(a)
 	yb := y(b)
 	if ya*yb > 0 {
-		err = errors.New("the signs of a and b are not different")
-		return 0, 0, 0, err
+		return 0, 0, 0, ErrFuncSignNotEqual
 	}
 	maxIter := 1 + math.Round((math.Log(b-a)-math.Log(tol))/math.Log(2))
 	for i = 0; i < int(maxIter); i++ {
@@ -107,8 +107,7 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int) (c, yC, ab
 	ya := y(a)
 	yb := y(b)
 	if ya*yb > 0 {
-		err = errors.New("the signs of a and b are not different")
-		return 0, 0, 0, err
+		return 0, 0, 0, ErrFuncSignNotEqual
 	}
 	for i := 0; i < maxIter; i++ {
 		dx = yb * (b - a) / (yb - ya)
