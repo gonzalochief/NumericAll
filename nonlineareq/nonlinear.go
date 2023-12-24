@@ -35,8 +35,7 @@ func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int) (i int, pAprox, errApro
 			return i, pAprox, errAprox, relErr, pSeries, nil
 		}
 	}
-	err = errors.New("maximum number of iretations reached")
-	return 0, 0, 0, 0, nil, err
+	return 0, 0, 0, 0, nil, ErrMaxIter
 }
 
 //BisectBolzano estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Bolzano's Bisection Method
@@ -79,8 +78,7 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64) (c, yC, absErr float64, err er
 			return c, y(c), math.Abs(b - a), nil
 		}
 	}
-	err = errors.New("maximum number of iretations reached")
-	return 0, 0, 0, err
+	return 0, 0, 0, ErrMaxIter
 }
 
 //RegulaFalsi estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Régula Falsi Method
@@ -121,8 +119,7 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int) (c, yC, ab
 			return c, yC, absErr, nil
 		}
 	}
-	err = errors.New("maximum number of iretations reached")
-	return 0, 0, 0, err
+	return 0, 0, 0, ErrMaxIter
 }
 
 //NewtonRaphson estimates the value of x that makes the function equal to 0 using the Newton-Raphson Method
@@ -149,7 +146,7 @@ func NewtonRaphson(y, dy YEqFuncx, p0, delta, epsilon float64, maxIter int) (zer
 			return p0, yP0, absErr, i, nil
 		}
 	}
-	return math.NaN(), math.NaN(), math.NaN(), i, errors.New("maximum iteration reached")
+	return math.NaN(), math.NaN(), math.NaN(), i, ErrMaxIter
 }
 
 //Secant estimates the value of x that makes the function equal to 0 using the Secant Method
@@ -177,7 +174,7 @@ func Secant(y YEqFuncx, p0, p1, delta, epsilon float64, maxIter int) (zeroApr, y
 			return p1, yZero, absErr, i, nil
 		}
 	}
-	return math.NaN(), math.NaN(), math.NaN(), i, errors.New("maximum iteration reached")
+	return math.NaN(), math.NaN(), math.NaN(), i, ErrMaxIter
 }
 
 func Steffensen() {}
