@@ -9,6 +9,11 @@ import (
 var ErrDivByZero = errors.New("divide by zero")
 var ErrMatSizeMissmatch = errors.New("matrix size missmatch")
 
+// MatrixAdd adds two 2D matrices of the same size
+// Input:
+// a, b are two matrices of the form [rows][column]Matrix
+// Output:
+// resVal is the sum matrix
 func MatrixAdd[Ord constraints.Ordered](a, b [][]Ord) (resVal [][]Ord, err error) {
 	sizeA := MatrixSize(a)
 	sizeB := MatrixSize(b)
