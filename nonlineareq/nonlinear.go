@@ -5,25 +5,29 @@ import (
 	"math"
 )
 
-//YEqFuncx function type is used to create y=f(x) type of functions
-//the params ..float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
+var ErrMaxIter = errors.New("maximum number of iretations reached")
+
+// YEqFuncx function type is used to create y=f(x) type of functions
+// the params ..float64 variable allows the user to enter configuration parameters to standard funcions (e.g. for irr estimations or any standard function which parameters change case by case).
 type YEqFuncx func(x float64) float64
 
-//FixPt estimates the solution to the equation x = g(x) using the p(n+1) = g(p(n)) iteration, which is estimated based on an initial point
-//Inputs:
+// FixPt estimates the solution to the equation x = g(x) using the p(n+1) = g(p(n)) iteration, which is estimated based on an initial point
+// Inputs:
+//
 //	y is the iteration function
 //	p0 is the starting point
 //	tol is the tolerance in decimal places
 //	maxIter is the maximum number of allowed iterations
-//Outputs:
+//
+// Outputs:
+//
 //	i last iteration
 //	pAprox fixed point approximation
 //	errAprox Absolute error
 //	relErr relative error
 //	pSeries fixed point iterations
 func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int) (i int, pAprox, errAprox, relErr float64, pSeries []float64, err error) {
-	var TolDec float64
-	TolDec = float64(1) / math.Pow10(tol)
+	TolDec := float64(1) / math.Pow10(tol)
 	epsilon := (math.Nextafter(1, 2) - 1)
 	pSeries = append(pSeries, p0)
 	for i = 1; i <= maxIter; i++ {
@@ -38,16 +42,19 @@ func FixPt(y YEqFuncx, p0 float64, tol int, maxIter int) (i int, pAprox, errApro
 	return 0, 0, 0, 0, nil, ErrMaxIter
 }
 
-//BisectBolzano estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Bolzano's Bisection Method
-//The method only works if the values of f(a) and f(b) have different signs
-//Inputs:
-//	y is a function of the form:
-//     f(x) = expression
-//  that has been reexpressed as 0 = expression - f(x)
+// BisectBolzano estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Bolzano's Bisection Method
+// The method only works if the values of f(a) and f(b) have different signs
+// Inputs:
 //
-//  a and b are the left and right extreme values of the interval
-//	tol is the tolerance
-//Outputs:
+//		y is a function of the form:
+//	    f(x) = expression
+//	 that has been reexpressed as 0 = expression - f(x)
+//
+//	 a and b are the left and right extreme values of the interval
+//		tol is the tolerance
+//
+// Outputs:
+//
 //	c is the zero
 //	yC is the function value evaluated at c
 //	absErr is the error of the approximation
@@ -71,7 +78,7 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64) (c, yC, absErr float64, err er
 			yb = yC
 		} else {
 			a = c
-			ya = yC
+			// ya = yC // It does not affect the calculation. Used only for debugging
 		}
 		if (b - a) < tol {
 			c = (a + b) / 2
@@ -81,14 +88,17 @@ func BisectBolzano(y YEqFuncx, a, b, tol float64) (c, yC, absErr float64, err er
 	return 0, 0, 0, ErrMaxIter
 }
 
-//RegulaFalsi estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Régula Falsi Method
-//The method only works if the values of f(a) and f(b) have different signs
-//Inputs:
+// RegulaFalsi estimates the value of x that makes the function equal to 0 inside the interval [a,b] using the Régula Falsi Method
+// The method only works if the values of f(a) and f(b) have different signs
+// Inputs:
+//
 //	y is the function function
 //	a and b are the left and right extreme values of the interval
 //	tol is the tolerance for the zero
 //	epsilon is the tolerance for f(c)
-//Outputs:
+//
+// Outputs:
+//
 //	c is the zero
 //	yC is the function value evaluated at c
 //	absErr is the error of the approximation
@@ -122,15 +132,18 @@ func RegulaFalsi(y YEqFuncx, a, b, tol, epsilon float64, maxIter int) (c, yC, ab
 	return 0, 0, 0, ErrMaxIter
 }
 
-//NewtonRaphson estimates the value of x that makes the function equal to 0 using the Newton-Raphson Method
-//Inputs:
-//	y is the function function y=f(x)
-//	dy is the dirivative of the function function y
-//	p0 is the initial point for the zero approximation
-//	delta is the tolerance for the zero
-//	epsilon is the tolerance for f(c)
-//  maxIter is the maximum iteration for the algorithm
-//Outputs:
+// NewtonRaphson estimates the value of x that makes the function equal to 0 using the Newton-Raphson Method
+// Inputs:
+//
+//		y is the function function y=f(x)
+//		dy is the dirivative of the function function y
+//		p0 is the initial point for the zero approximation
+//		delta is the tolerance for the zero
+//		epsilon is the tolerance for f(c)
+//	 maxIter is the maximum iteration for the algorithm
+//
+// Outputs:
+//
 //	zeroApr is the approximation to the zero (P0)
 //	yC is the function value evaluated at P0
 //	absErr is the error of the approximation
@@ -149,15 +162,18 @@ func NewtonRaphson(y, dy YEqFuncx, p0, delta, epsilon float64, maxIter int) (zer
 	return math.NaN(), math.NaN(), math.NaN(), i, ErrMaxIter
 }
 
-//Secant estimates the value of x that makes the function equal to 0 using the Secant Method
-//Inputs:
-//	y is the function function y=f(x)
-//	dy is the dirivative of the function function y
-//	p0 and P1 are the initial point for the zero approximation
-//	delta is the tolerance for the zero
-//	epsilon is the tolerance for f(c)
-//  maxIter is the maximum iteration for the algorithm
-//Outputs:
+// Secant estimates the value of x that makes the function equal to 0 using the Secant Method
+// Inputs:
+//
+//		y is the function function y=f(x)
+//		dy is the dirivative of the function function y
+//		p0 and P1 are the initial point for the zero approximation
+//		delta is the tolerance for the zero
+//		epsilon is the tolerance for f(c)
+//	 maxIter is the maximum iteration for the algorithm
+//
+// Outputs:
+//
 //	zeroApr is the approximation to the zero (P0)
 //	yC is the function value evaluated at P0
 //	absErr is the error of the approximation

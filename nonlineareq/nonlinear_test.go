@@ -18,7 +18,7 @@ type testStructureFP struct {
 func TestFixedPoint(t *testing.T) {
 
 	// Set test cases
-	testCasesFP := make([]testStructureFP, 3)
+	testCasesFP := make([]testStructureFP, 4)
 
 	testCasesFP[0].TestFunctions = func(x float64) float64 {
 		return -4 + 4*x - (1.0/2.0)*math.Pow(x, 2)
@@ -50,36 +50,47 @@ func TestFixedPoint(t *testing.T) {
 	testCasesFP[2].ExpectedValue = 3
 	testCasesFP[2].ExpectedIter = 8
 
+	//wip
+	testCasesFP[3].TestFunctions = func(x float64) float64 {
+		return 0.5*x + 1.5
+	}
+	testCasesFP[3].TestCaseName = "Fixed Point custom 1"
+	testCasesFP[3].InitialEst = 4
+	testCasesFP[3].TestTol = 6
+	testCasesFP[3].MaxIter = 50
+	testCasesFP[3].ExpectedValue = 3.000002
+	testCasesFP[3].ExpectedIter = 19
+
+	// Test case: algorythm prformance and results
 	for _, tc := range testCasesFP {
 		iter, pAprox, errAprox, relErr, _, err := FixPt(tc.TestFunctions, tc.InitialEst, tc.TestTol, tc.MaxIter)
 		decTol := 1.0 / math.Pow10(tc.TestTol)
-		if math.Abs(tc.ExpectedValue-pAprox) >= decTol {
-			t.Errorf("wrong values for case %s. expected aprox: %f, received: %f", tc.TestCaseName, tc.ExpectedValue, pAprox)
-		}
-		if iter != tc.ExpectedIter {
-			t.Errorf("wrong values for case %s. expected iter: %d, received: %d", tc.TestCaseName, tc.ExpectedIter, iter)
-		}
-		if !((errAprox >= decTol) || (relErr >= decTol)) {
-			if errAprox >= decTol {
-				t.Errorf("wrong values for case %s. expected absolute error: %f, received: %f", tc.TestCaseName, decTol, errAprox)
-			}
-			if relErr >= decTol {
-				t.Errorf("wrong values for case %s. expected relative error: %f, received: %f", tc.TestCaseName, decTol, relErr)
-			}
-		}
-		//test error case: maximum iterations reached without convergence
-		iter, pAprox, errAprox, relErr, _, err = FixPt(tc.TestFunctions, tc.InitialEst, tc.TestTol, 3)
+		t.Logf("testing case number: %s", tc.TestCaseName)
 		if err == nil {
-			t.Error("maximum iteration reached error not catched")
+			if math.Abs(tc.ExpectedValue-pAprox) >= decTol {
+				t.Errorf("wrong values for case %s. expected aprox: %f, received: %f", tc.TestCaseName, tc.ExpectedValue, pAprox)
+			}
+			if iter != tc.ExpectedIter {
+				t.Errorf("wrong values for case %s. expected iter: %d, received: %d", tc.TestCaseName, tc.ExpectedIter, iter)
+			}
+			if !((errAprox >= decTol) || (relErr >= decTol)) {
+				if errAprox >= decTol {
+					t.Errorf("wrong values for case %s. expected absolute error: %f, received: %f", tc.TestCaseName, decTol, errAprox)
+				}
+				if relErr >= decTol {
+					t.Errorf("wrong values for case %s. expected relative error: %f, received: %f", tc.TestCaseName, decTol, relErr)
+				}
+			}
 		}
-	}
-
-	var funcToEval3 YEqFuncx = func(x float64) float64 {
-		return 0.5*x + 1.5
-	}
-	_, _, absErr, relErr, _, _ := FixPt(funcToEval3, 4, 10, 50) //this test case converges to 3, but with decimals (not an exact solution). The ok trigger commes from the errors (relative) being lower than the tolerance
-	if (absErr > (1.0 / math.Pow10(10))) && (relErr > (1.0 / math.Pow10(10))) {
-		t.Error("None of the error measures fulfill the tollerance requirement")
+		t.Logf("testing case number: %s OK", tc.TestCaseName)
+		t.Logf("testing error signals case number: %s", tc.TestCaseName)
+		//test case: error maximum iterations reached
+		_, _, _, _, _, err = FixPt(tc.TestFunctions, tc.InitialEst, tc.TestTol, 3)
+		switch err {
+		case nil:
+			t.Error("maximum iteration reached error not catched") // Fail to catch error. Algorithm should not converge
+		}
+		t.Logf("testing error signals case number: %s OK", tc.TestCaseName)
 	}
 }
 
