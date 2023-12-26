@@ -4,6 +4,9 @@ import (
 	"errors"
 	"math"
 
+	"golang.org/x/exp/constraints"
+)
+
 // FastInvSqrt implements Quake III's Fast Inverse Square Root algorythm for Float types (64 and 32)
 // Input:
 // - input: float radicand
