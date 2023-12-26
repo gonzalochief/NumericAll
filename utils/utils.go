@@ -7,6 +7,11 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
+var (
+	ErrIndRes  = errors.New("indetermined result")
+	ErrIterMin = errors.New("minimum iteration not met")
+)
+
 // FastInvSqrt implements Quake III's Fast Inverse Square Root algorythm for Float types (64 and 32)
 // Input:
 // - input: float radicand
@@ -54,22 +59,20 @@ func FastInvSqrt[T constraints.Float](input T, iterations int) (output T, err er
 // - error
 func FastInvSqrt32(input float32, iterations int) (output float32, err error) {
 	if input < 0 {
-		return float32(math.NaN()), errors.New("indetermined square root. negative input")
+		return float32(math.NaN()), ErrIndRes
 	}
 	if iterations > 0 {
-		var x2 float32
-		x2 = input * 0.5
+		var x2 float32 = input * 0.5
 		i := math.Float32bits(input)
 		//i = 0x5F3759DF - (i >> 1) // Original Quake III estimation  of the Magic Number
 		i = 0x5F375A86 - (i >> 1) // Lomont estimation  of the Magic Number
 		output = math.Float32frombits(i)
 		output = output * (1.5 - (x2 * output * output))
-		for i := 1; i < iterations; i++ {
+		for j := 1; j < iterations; j++ {
 			output = output * (1.5 - (x2 * output * output))
-			break
 		}
 	} else {
-		return float32(math.NaN()), errors.New("iterations must be equal or greater that 1")
+		return float32(math.NaN()), ErrIterMin
 	}
 	return output, nil
 }
@@ -83,21 +86,19 @@ func FastInvSqrt32(input float32, iterations int) (output float32, err error) {
 // - error
 func FastInvSqrt64(input float64, iterations int) (output float64, err error) {
 	if input < 0 {
-		return math.NaN(), errors.New("indetermined square root. negative input")
+		return math.NaN(), ErrIndRes
 	}
 	if iterations > 0 {
-		var x2 float64
-		x2 = input * 0.5
+		var x2 float64 = input * 0.5
 		i := math.Float64bits(input)
 		i = 0x5FE6EB50C7B537A9 - (i >> 1) // Robertson estimation of the Magic Number
 		output = math.Float64frombits(i)
 		output = output * (1.5 - (x2 * output * output))
-		for i := 1; i < iterations; i++ {
+		for j := 1; j < iterations; j++ {
 			output = output * (1.5 - (x2 * output * output))
-			break
 		}
 	} else {
-		return math.NaN(), errors.New("iterations must be equal or greater that 1")
+		return math.NaN(), ErrIterMin
 	}
 	return output, nil
 }
