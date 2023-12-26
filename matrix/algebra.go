@@ -39,6 +39,32 @@ func MatrixAdd[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
 	return resVal, nil
 }
 
+// MatrixSub adds two 2D matrices of the same size
+// Input:
+// a, b are two matrices of the form [rows][column]Matrix
+// Output:
+// resVal is the substraction  matrix
+func MatrixSub[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
+	sizeA := MatrixSize(a)
+	sizeB := MatrixSize(b)
+	if sizeA != sizeB {
+		return nil, ErrMatSizeMissmatch
+	}
+	rows := sizeA[0]
+	columns := sizeA[1]
+	// Expand output slice
+	for i := 0; i < rows; i++ {
+		resVal = append(resVal, make([]Ord, columns))
+	}
+
+	for i := 0; i < rows; i++ {
+		for j := 0; j < columns; j++ {
+			resVal[i][j] = a[i][j] - b[i][j]
+		}
+	}
+	return resVal, nil
+}
+
 // MatrixSize estimates the size of a 2D matrix
 // Input:
 // input is the numerical input matrix of the form [rows][column]Matrix

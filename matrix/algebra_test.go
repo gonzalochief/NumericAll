@@ -91,6 +91,80 @@ func TestMatrixSum(t *testing.T) {
 	}
 }
 
+func TestMatrixSub(t *testing.T) {
+	testCases := make([]testMatrixSum, 2)
+	// Test case - size missmatch error return
+	testCases[0].TestMatrixAInt = [][]int{
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 9},
+	}
+	testCases[0].TestMatrixBInt = [][]int{
+		{1, 2, 3},
+		{4, 5, 6},
+	}
+	testCases[0].TestMatrixAF64 = [][]float64{
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 9},
+	}
+	testCases[0].TestMatrixBF64 = [][]float64{
+		{1, 2, 3},
+		{4, 5, 6},
+	}
+	testCases[0].ExpectedError = ErrMatSizeMissmatch
+
+	// Test case - success
+	testCases[1].TestMatrixAInt = [][]int{
+		{20, 8, 0},
+		{12, 7, 18},
+		{10, 16, 17},
+	}
+	testCases[1].TestMatrixBInt = [][]int{
+		{3, 11, 8},
+		{2, 17, 12},
+		{18, 2, 15},
+	}
+	testCases[1].TestResMatInt = [][]int{
+		{17, -3, -8},
+		{10, -10, 6},
+		{-8, 14, 2},
+	}
+	testCases[1].TestMatrixAF64 = [][]float64{
+		{20, 8, 0},
+		{12, 7, 18},
+		{10, 16, 17},
+	}
+	testCases[1].TestMatrixBF64 = [][]float64{
+		{3, 11, 8},
+		{2, 17, 12},
+		{18, 2, 15},
+	}
+	testCases[1].TestResMatF64 = [][]float64{
+		{17, -3, -8},
+		{10, -10, 6},
+		{-8, 14, 2},
+	}
+	testCases[1].ExpectedError = nil
+
+	for _, tc := range testCases {
+		resInt, err := MatrixSub(tc.TestMatrixAInt, tc.TestMatrixBInt)
+		if !errors.Is(err, tc.ExpectedError) {
+			t.Errorf("failed to detect matrix size missmatch, int variable type")
+		}
+		if !reflect.DeepEqual(tc.TestResMatInt, resInt) {
+			t.Errorf("wrong result value, int variable type")
+		}
+		resF64, err := MatrixSub(tc.TestMatrixAF64, tc.TestMatrixBF64)
+		if !errors.Is(err, tc.ExpectedError) {
+			t.Errorf("failed to detect matrix size missmatch, float variable type")
+		}
+		if !reflect.DeepEqual(tc.TestResMatF64, resF64) {
+			t.Errorf("wrong result value, float variable type")
+		}
+	}
+}
+
 type testStrMatrixSize struct {
 	TestMatrixInt [][]int
 	TestMatrixF64 [][]float64
