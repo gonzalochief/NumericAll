@@ -9,12 +9,16 @@ import (
 var ErrDivByZero = errors.New("divide by zero")
 var ErrMatSizeMissmatch = errors.New("matrix size missmatch")
 
+type Number interface {
+	constraints.Float | constraints.Integer | constraints.Complex
+}
+
 // MatrixAdd adds two 2D matrices of the same size
 // Input:
 // a, b are two matrices of the form [rows][column]Matrix
 // Output:
 // resVal is the sum matrix
-func MatrixAdd[Ord constraints.Ordered](a, b [][]Ord) (resVal [][]Ord, err error) {
+func MatrixAdd[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
 	sizeA := MatrixSize(a)
 	sizeB := MatrixSize(b)
 	if sizeA != sizeB {
@@ -40,7 +44,7 @@ func MatrixAdd[Ord constraints.Ordered](a, b [][]Ord) (resVal [][]Ord, err error
 // input is the numerical input matrix of the form [rows][column]Matrix
 // Output:
 // matrixSize is a vector with the size of the matrix [rows, columns]
-func MatrixSize[Ord constraints.Ordered](input [][]Ord) (matrixSize [2]int) {
+func MatrixSize[Ord Number](input [][]Ord) (matrixSize [2]int) {
 	matrixSize = [2]int{len(input[:][:]), len(input[0][:])}
 	return
 }
