@@ -105,3 +105,69 @@ func TestInverseSqrt64(t *testing.T) {
 	}
 
 }
+
+type testStrAbs struct {
+	TestValF64 []float64
+	TestResF64 []float64
+	TestValF32 []float32
+	TestResF32 []float32
+}
+
+func TestAbsFloat(t *testing.T) {
+	// Set test cases
+	testCasesAbs := make([]testStrAbs, 1)
+	testCasesAbs[0].TestValF64 = []float64{-1000, -500, -0.1, 0, 0.1, 500, 1000, math.Inf(1), math.Inf(-1)}
+	testCasesAbs[0].TestResF64 = []float64{1000, 500, 0.1, 0, 0.1, 500, 1000, math.Inf(1), math.Inf(1)}
+	testCasesAbs[0].TestValF32 = []float32{-1000, -500, -0.1, 0, 0.1, 500, 1000, float32(math.Inf(1)), float32(math.Inf(-1))}
+	testCasesAbs[0].TestResF32 = []float32{1000, 500, 0.1, 0, 0.1, 500, 1000, float32(math.Inf(1)), float32(math.Inf(1))}
+	// Test case: algorythm prformance and results
+	for _, tc := range testCasesAbs {
+		for i, tVal := range tc.TestValF64 {
+			if Abs(tVal) != tc.TestResF64[i] {
+				t.Errorf("wrong value for float64, expected: %f, received: %f", tc.TestResF64[i], Abs(tVal))
+			}
+		}
+		for i, tVal := range tc.TestValF32 {
+			if Abs(tVal) != tc.TestResF32[i] {
+				t.Errorf("wrong value for float32, expected: %f, received: %f", tc.TestResF32[i], Abs(tVal))
+			}
+		}
+	}
+	// Test case: NaN special case
+	if !IsNaN(Abs(NaN[float64]())) {
+		t.Errorf("wrong value for float64, expected: NaN, received: %f", math.NaN())
+	}
+	if !IsNaN(Abs(NaN[float32]())) {
+		t.Errorf("wrong value for float32, expected: NaN, received: %f", float32(math.NaN()))
+	}
+}
+
+func BenchmarkAbsFloat(b *testing.B) {
+	// Set test cases
+	testCasesAbs := make([]testStrAbs, 1)
+	testCasesAbs[0].TestValF64 = []float64{-1000, -500, -0.1, 0, 0.1, 500, 1000, math.Inf(1), math.Inf(-1)}
+	testCasesAbs[0].TestResF64 = []float64{1000, 500, 0.1, 0, 0.1, 500, 1000, math.Inf(1), math.Inf(1)}
+	testCasesAbs[0].TestValF32 = []float32{-1000, -500, -0.1, 0, 0.1, 500, 1000, float32(math.Inf(1)), float32(math.Inf(-1))}
+	testCasesAbs[0].TestResF32 = []float32{1000, 500, 0.1, 0, 0.1, 500, 1000, float32(math.Inf(1)), float32(math.Inf(1))}
+	// Test case: algorythm prformance and results
+	for _, tc := range testCasesAbs {
+		for _, tVal := range tc.TestValF64 {
+			_ = Abs(tVal)
+		}
+	}
+}
+
+func BenchmarkAbsFloatGo(b *testing.B) {
+	// Set test cases
+	testCasesAbs := make([]testStrAbs, 1)
+	testCasesAbs[0].TestValF64 = []float64{-1000, -500, -0.1, 0, 0.1, 500, 1000, math.Inf(1), math.Inf(-1)}
+	testCasesAbs[0].TestResF64 = []float64{1000, 500, 0.1, 0, 0.1, 500, 1000, math.Inf(1), math.Inf(1)}
+	testCasesAbs[0].TestValF32 = []float32{-1000, -500, -0.1, 0, 0.1, 500, 1000, float32(math.Inf(1)), float32(math.Inf(-1))}
+	testCasesAbs[0].TestResF32 = []float32{1000, 500, 0.1, 0, 0.1, 500, 1000, float32(math.Inf(1)), float32(math.Inf(1))}
+	// Test case: algorythm prformance and results
+	for _, tc := range testCasesAbs {
+		for _, tVal := range tc.TestValF64 {
+			_ = math.Abs(tVal)
+		}
+	}
+}
