@@ -61,6 +61,16 @@ func FastInvSqrt64(input float64, iterations int) (output float64, err error) {
 	}
 	return output, nil
 }
+
+// IsNaN reports whether f is an IEEE 754 “not-a-number” value.
+func IsNaN[T constraints.Float](f T) (is bool) {
+	// IEEE 754 says that only NaNs satisfy f != f.
+	// To avoid the floating-point hardware, could use:
+	//	x := Float64bits(f);
+	//	return uint32(x>>shift)&mask == mask && x != uvinf && x != uvneginf
+	return f != f
+}
+
 const (
 	uvnanDouble = 0x7FF8000000000001
 	uvnanSingle = 0x7F800001
