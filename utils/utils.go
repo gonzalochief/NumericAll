@@ -62,6 +62,23 @@ func FastInvSqrt64(input float64, iterations int) (output float64, err error) {
 	return output, nil
 }
 
+// Abs returns the absolute value of x.
+//
+// Special cases are:
+//
+//	Abs(±Inf) = +Inf
+//	Abs(NaN) = NaN
+func Abs[T constraints.Float](x T) T {
+	var getTemp T
+	switch any(x).(type) {
+	case float64:
+		getTemp = T(math.Float64frombits(math.Float64bits(any(x).(float64)) &^ (1 << 63)))
+	case float32:
+		getTemp = T(math.Float32frombits(math.Float32bits(any(x).(float32)) &^ (1 << 31)))
+	}
+	return getTemp
+}
+
 // IsNaN reports whether f is an IEEE 754 “not-a-number” value.
 func IsNaN[T constraints.Float](f T) (is bool) {
 	// IEEE 754 says that only NaNs satisfy f != f.
