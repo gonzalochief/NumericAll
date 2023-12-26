@@ -61,3 +61,13 @@ func FastInvSqrt64(input float64, iterations int) (output float64, err error) {
 	}
 	return output, nil
 }
+// NaN returns an IEEE 754 “not-a-number” value.
+func NaN[T constraints.Float]() (out T) {
+	switch any(out).(type) {
+	case float64:
+		out = T(math.Float64frombits(uvnanDouble))
+	case float32:
+		out = T(math.Float32frombits(uvnanSingle))
+	}
+	return
+}
