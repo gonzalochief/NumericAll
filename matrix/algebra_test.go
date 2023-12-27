@@ -164,7 +164,7 @@ func TestMatrixSub(t *testing.T) {
 	}
 }
 
-type testStrMatrixScalMult struct {
+type testMatrixScalMult struct {
 	TestScalInt    int
 	TestMatrixInt  [][]int
 	TestResMatInt  [][]int
@@ -178,7 +178,7 @@ type testStrMatrixScalMult struct {
 }
 
 func TestMatrixScalMult(t *testing.T) {
-	testCases := make([]testStrMatrixScalMult, 2)
+	testCases := make([]testMatrixScalMult, 2)
 	// Test case - size missmatch error return
 	testCases[0].TestScalInt = 5
 	testCases[0].TestMatrixInt = [][]int{
@@ -266,35 +266,35 @@ func TestMatrixScalMult(t *testing.T) {
 	}
 }
 
-type testStrMatrixSize struct {
+type testMatrixSize struct {
 	TestMatrixInt [][]int
 	TestMatrixF64 [][]float64
 	ExpectedSize  [2]int
 }
 
 func TestMatrixSize(t *testing.T) {
-	testCasesInt := make([]testStrMatrixSize, 2)
-	testCasesInt[0].TestMatrixInt = [][]int{
+	testCases := make([]testMatrixSize, 2)
+	testCases[0].TestMatrixInt = [][]int{
 		{1, 2, 3},
 		{4, 5, 6},
 		{7, 8, 9},
 	}
-	testCasesInt[0].TestMatrixF64 = [][]float64{
+	testCases[0].TestMatrixF64 = [][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
 		{7, 8, 9},
 	}
-	testCasesInt[0].ExpectedSize = [2]int{3, 3}
-	testCasesInt[1].TestMatrixInt = [][]int{
+	testCases[0].ExpectedSize = [2]int{3, 3}
+	testCases[1].TestMatrixInt = [][]int{
 		{1, 2, 3},
 		{4, 5, 6},
 	}
-	testCasesInt[1].TestMatrixF64 = [][]float64{
+	testCases[1].TestMatrixF64 = [][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
 	}
-	testCasesInt[1].ExpectedSize = [2]int{2, 3}
-	for _, tc := range testCasesInt {
+	testCases[1].ExpectedSize = [2]int{2, 3}
+	for _, tc := range testCases {
 		size := MatrixSize(tc.TestMatrixInt)
 		if size != tc.ExpectedSize {
 			t.Errorf("wrong matrix size estimation for int type. Expected: %v, received: %v", tc.ExpectedSize, size)
