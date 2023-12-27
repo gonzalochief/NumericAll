@@ -18,7 +18,7 @@ type Number interface {
 // a, b are two matrices of the form [rows][column]Matrix
 // Output:
 // resVal is the sum matrix
-func MatrixAdd[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
+func MatrixAdd[Num Number](a, b [][]Num) (resVal [][]Num, err error) {
 	sizeA := MatrixSize(a)
 	sizeB := MatrixSize(b)
 	if sizeA != sizeB {
@@ -28,7 +28,7 @@ func MatrixAdd[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
 	columns := sizeA[1]
 	// Expand output slice
 	for i := 0; i < rows; i++ {
-		resVal = append(resVal, make([]Ord, columns))
+		resVal = append(resVal, make([]Num, columns))
 	}
 
 	for i := 0; i < rows; i++ {
@@ -44,7 +44,7 @@ func MatrixAdd[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
 // a, b are two matrices of the form [rows][column]Matrix
 // Output:
 // resVal is the substraction  matrix
-func MatrixSub[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
+func MatrixSub[Num Number](a, b [][]Num) (resVal [][]Num, err error) {
 	sizeA := MatrixSize(a)
 	sizeB := MatrixSize(b)
 	if sizeA != sizeB {
@@ -54,7 +54,7 @@ func MatrixSub[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
 	columns := sizeA[1]
 	// Expand output slice
 	for i := 0; i < rows; i++ {
-		resVal = append(resVal, make([]Ord, columns))
+		resVal = append(resVal, make([]Num, columns))
 	}
 
 	for i := 0; i < rows; i++ {
@@ -102,7 +102,7 @@ func IsSqare[Num Number](input [][]Num) (is bool, matSize [2]int) {
 // input is the numerical input matrix of the form [rows][column]Matrix
 // Output:
 // matrixSize is a vector with the size of the matrix [rows, columns]
-func MatrixSize[Ord Number](input [][]Ord) (matrixSize [2]int) {
+func MatrixSize[Num Number](input [][]Num) (matrixSize [2]int) {
 	matrixSize = [2]int{len(input[:][:]), len(input[0][:])}
 	return
 }
