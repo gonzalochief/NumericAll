@@ -305,3 +305,52 @@ func TestMatrixSize(t *testing.T) {
 		}
 	}
 }
+
+type testMatrixSq struct {
+	TestMatrixInt [][]int
+	TestMatrixF64 [][]float64
+	ExpectedRes   bool
+	ExpectedSize  [2]int
+}
+
+func TestMatrixSq(t *testing.T) {
+	testCases := make([]testMatrixSq, 2)
+	testCases[0].TestMatrixInt = [][]int{
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 9},
+	}
+	testCases[0].TestMatrixF64 = [][]float64{
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 9},
+	}
+	testCases[0].ExpectedRes = true
+	testCases[0].ExpectedSize = [2]int{3, 3}
+	testCases[1].TestMatrixInt = [][]int{
+		{1, 2, 3},
+		{4, 5, 6},
+	}
+	testCases[1].TestMatrixF64 = [][]float64{
+		{1, 2, 3},
+		{4, 5, 6},
+	}
+	testCases[1].ExpectedRes = false
+	testCases[1].ExpectedSize = [2]int{2, 3}
+	for _, tc := range testCases {
+		isSquare, size := IsSquare(tc.TestMatrixInt)
+		if size != tc.ExpectedSize {
+			t.Errorf("wrong matrix size estimation for int type. Expected: %v, received: %v", tc.ExpectedSize, size)
+		}
+		if isSquare != tc.ExpectedRes {
+			t.Errorf("fail to catch expected result for int type. Expected: %v, received: %v", tc.ExpectedRes, isSquare)
+		}
+		isSquare, size = IsSquare(tc.TestMatrixF64)
+		if size != tc.ExpectedSize {
+			t.Errorf("wrong matrix size estimation for float64 type. Expected: %v, received: %v", tc.ExpectedSize, size)
+		}
+		if isSquare != tc.ExpectedRes {
+			t.Errorf("fail to catch expected result for float64 type. Expected: %v, received: %v", tc.ExpectedRes, isSquare)
+		}
+	}
+}
