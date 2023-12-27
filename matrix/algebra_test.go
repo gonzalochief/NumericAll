@@ -13,7 +13,6 @@ type testMatrixSum struct {
 	TestMatrixAF64 [][]float64
 	TestMatrixBF64 [][]float64
 	TestResMatF64  [][]float64
-	ExpectedSize   [2]int
 	ExpectedError  error
 }
 
