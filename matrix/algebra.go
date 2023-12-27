@@ -65,6 +65,32 @@ func MatrixSub[Ord Number](a, b [][]Ord) (resVal [][]Ord, err error) {
 	return resVal, nil
 }
 
+// MatrixScalMult implements the scalar multiplication of a matrix
+// Input:
+// matr is a matrix of the form [rows][column]Matrix
+// scal is a scalar value
+// Output:
+// resVal is the scalar multiblication scal * [][]matr
+func MatrixScalMult[Num Number](matr [][]Num, scal Num) (resVal [][]Num) {
+	size := MatrixSize(matr)
+	rows := size[0]
+	columns := size[1]
+	// Expand output slice
+	for i := 0; i < rows; i++ {
+		resVal = append(resVal, make([]Num, columns))
+	}
+	// multiplication by 0 equals zero matrix
+	if scal == 0 {
+		return resVal
+	}
+	for i := 0; i < rows; i++ {
+		for j := 0; j < columns; j++ {
+			resVal[i][j] = scal * matr[i][j]
+		}
+	}
+	return resVal
+}
+
 // MatrixSize estimates the size of a 2D matrix
 // Input:
 // input is the numerical input matrix of the form [rows][column]Matrix

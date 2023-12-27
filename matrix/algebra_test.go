@@ -165,6 +165,108 @@ func TestMatrixSub(t *testing.T) {
 	}
 }
 
+type testStrMatrixScalMult struct {
+	TestScalInt    int
+	TestMatrixInt  [][]int
+	TestResMatInt  [][]int
+	TestScalF64    float64
+	TestMatrixF64  [][]float64
+	TestResMatF64  [][]float64
+	TestScalC128   complex128
+	TestMatrixC128 [][]complex128
+	TestResMatC128 [][]complex128
+	ExpectedError  error
+}
+
+func TestMatrixScalMult(t *testing.T) {
+	testCases := make([]testStrMatrixScalMult, 2)
+	// Test case - size missmatch error return
+	testCases[0].TestScalInt = 5
+	testCases[0].TestMatrixInt = [][]int{
+		{0, 3, 0},
+		{0, 1, 3},
+		{3, 5, 4},
+	}
+	testCases[0].TestResMatInt = [][]int{
+		{0, 15, 0},
+		{0, 5, 15},
+		{15, 25, 20},
+	}
+	testCases[0].TestScalF64 = 5
+	testCases[0].TestMatrixF64 = [][]float64{
+		{0, 3, 0},
+		{0, 1, 3},
+		{3, 5, 4},
+	}
+	testCases[0].TestResMatF64 = [][]float64{
+		{0, 15, 0},
+		{0, 5, 15},
+		{15, 25, 20},
+	}
+	testCases[0].TestScalC128 = 1 + 3i
+	testCases[0].TestMatrixC128 = [][]complex128{
+		{4 + 1i, 4 + 4i, 1 + 1i},
+		{4 + 1i, 1 + 3i, 3 + 4i},
+		{2 + 2i, 2 + 3i, 4 + 3i},
+	}
+	testCases[0].TestResMatC128 = [][]complex128{
+		{1 + 13i, -8 + 16i, -2 + 4i},
+		{1 + 13i, -8 + 6i, -9 + 13i},
+		{-4 + 8i, -7 + 9i, -5 + 15i},
+	}
+	testCases[0].ExpectedError = nil
+	// Test case: multiplication by 0
+	testCases[1].TestScalInt = 0
+	testCases[1].TestMatrixInt = [][]int{
+		{0, 3, 0},
+		{0, 1, 3},
+		{3, 5, 4},
+	}
+	testCases[1].TestResMatInt = [][]int{
+		{0, 0, 0},
+		{0, 0, 0},
+		{0, 0, 0},
+	}
+	testCases[1].TestScalF64 = 0
+	testCases[1].TestMatrixF64 = [][]float64{
+		{0, 3, 0},
+		{0, 1, 3},
+		{3, 5, 4},
+	}
+	testCases[1].TestResMatF64 = [][]float64{
+		{0, 0, 0},
+		{0, 0, 0},
+		{0, 0, 0},
+	}
+	testCases[1].TestScalC128 = 0
+	testCases[1].TestMatrixC128 = [][]complex128{
+		{4 + 1i, 4 + 4i, 1 + 1i},
+		{4 + 1i, 1 + 3i, 3 + 4i},
+		{2 + 2i, 2 + 3i, 4 + 3i},
+	}
+	testCases[1].TestResMatC128 = [][]complex128{
+		{0, 0, 0},
+		{0, 0, 0},
+		{0, 0, 0},
+	}
+	testCases[1].ExpectedError = nil
+
+	for _, tc := range testCases {
+		resInt := MatrixScalMult(tc.TestMatrixInt, tc.TestScalInt)
+		if !reflect.DeepEqual(tc.TestResMatInt, resInt) {
+			t.Errorf("wrong result value, int variable type")
+		}
+		resF64 := MatrixScalMult(tc.TestMatrixF64, tc.TestScalF64)
+		if !reflect.DeepEqual(tc.TestResMatF64, resF64) {
+			t.Errorf("wrong result value, float variable type")
+		}
+		resC128 := MatrixScalMult(tc.TestMatrixC128, tc.TestScalC128)
+		if !reflect.DeepEqual(tc.TestResMatC128, resC128) {
+			t.Errorf("wrong result value, complex 128 variable type")
+		}
+	}
+}
+
 type testStrMatrixSize struct {
 	TestMatrixInt [][]int
 	TestMatrixF64 [][]float64
