@@ -92,7 +92,7 @@ func MatrixScalMult[Num Number](matr [][]Num, scal Num) (resVal [][]Num) {
 }
 
 // IsSquare checks if a matrix is squared (i.e. rows == columns)
-func IsSqare[Num Number](input [][]Num) (is bool, matSize [2]int) {
+func IsSquare[Num Number](input [][]Num) (is bool, matSize [2]int) {
 	matSize = MatrixSize(input)
 	return matSize[0] == matSize[1], matSize
 }
