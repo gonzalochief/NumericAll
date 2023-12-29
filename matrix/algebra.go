@@ -9,8 +9,14 @@ import (
 var ErrDivByZero = errors.New("divide by zero")
 var ErrMatSizeMissmatch = errors.New("matrix size missmatch")
 
+// Set of all numbers R(real) U C(complex) U i(imaginary)
 type Number interface {
 	constraints.Float | constraints.Integer | constraints.Complex
+}
+
+// Set of Real Numbers
+type Real interface {
+	constraints.Float | constraints.Integer
 }
 
 // MatrixAdd adds two 2D matrices of the same size
