@@ -306,6 +306,48 @@ func TestMatrixSize(t *testing.T) {
 	}
 }
 
+type testMAtrixMult struct {
+	TestMatrixAInt    [][]int
+	TestMatrixBInt    [][]int
+	TestMatrixResInt  [][]int
+	TestExpectedError error
+}
+
+func TestMatrixMult(t *testing.T) {
+	testCases := make([]testMAtrixMult, 2)
+	testCases[0].TestMatrixAInt = [][]int{
+		{2, 0, -3},
+		{4, 1, 5},
+	}
+	testCases[0].TestMatrixBInt = [][]int{
+		{7, -1, 4, 7},
+		{2, 5, 0, -4},
+		{-3, 1, 2, 3},
+	}
+	testCases[0].TestMatrixResInt = [][]int{
+		{23, -5, 2, 5},
+		{15, 6, 26, 39},
+	}
+	testCases[1].TestMatrixAInt = [][]int{
+		{2, 0, -3},
+		{4, 1, 5},
+	}
+	testCases[1].TestMatrixBInt = [][]int{
+		{7, -1, 4, 7},
+		{2, 5, 0, -4},
+	}
+	testCases[1].TestExpectedError = ErrMatNotCompatible
+	for _, tc := range testCases {
+		res, err := MatrixMult(tc.TestMatrixAInt, tc.TestMatrixBInt)
+		if err != tc.TestExpectedError {
+			t.Errorf("fail to catch expected error int type. Expected: %v, received: %v", tc.TestExpectedError, err)
+		}
+		if !reflect.DeepEqual(res, tc.TestMatrixResInt) {
+			t.Errorf("wrong result value, int variable type")
+		}
+	}
+}
+
 type testMatrixSq struct {
 	TestMatrixInt [][]int
 	TestMatrixF64 [][]float64

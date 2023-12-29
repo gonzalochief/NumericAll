@@ -91,6 +91,63 @@ func MatrixScalMult[Num Number](matr [][]Num, scal Num) (resVal [][]Num) {
 	return resVal
 }
 
+// MatrixMult implements the multiplication of two matrix using the naive approach
+// Input:
+// a, and b are two compatible matrices of the form [rows][column]Matrix
+// Output:
+// resVal is the scalar multiblication scal * [][]matr
+func MatrixMult[Num Number](a, b [][]Num) (resVal [][]Num, err error) {
+	sizeA := MatrixSize(a)
+	sizeB := MatrixSize(b)
+	if sizeA[1] != sizeB[0] {
+		return nil, ErrMatNotCompatible
+	} else {
+		for i := 0; i < sizeA[0]; i++ {
+			resVal = append(resVal, make([]Num, sizeB[1]))
+		}
+		for i := range a {
+			sliceA := GetRow(a, i)
+			for j := range b[0] {
+				sliceB := GetCol(b, j)
+				resVal[i][j], _ = VectScalMult(sliceA, sliceB)
+			}
+		}
+	}
+	fmt.Println(resVal)
+	return
+}
+
+// VectScalMult implements the scalar multiplication of vectors
+// Input:
+// a, and b are two equaly sized (equal number of components) vectors of the form []Vector
+// Output:
+// resVal is the scalar multiblication []a * b[]
+func VectScalMult[Num Number](a, b []Num) (resVal Num, err error) {
+	sizeA := len(a)
+	sizeB := len(b)
+	if sizeA != sizeB {
+		return resVal, ErrVecSizeMissmatch
+	}
+	for i := 0; i < sizeA; i++ {
+		resVal += a[i] * b[i]
+	}
+	return
+}
+
+// GetCol extracts a given column out from a 2D slice (matrix)
+func GetCol[Num Number](input [][]Num, col int) (resVal []Num) {
+	//check error col number
+	for j := range input {
+		resVal = append(resVal, input[j][col])
+	}
+	return
+}
+
+// GetRow extracts a given row out from a 2D slice (matrix)
+func GetRow[Num Number](input [][]Num, row int) (output []Num) {
+	return input[row]
+}
+
 // IsSquare checks if a matrix is squared (i.e. rows == columns)
 func IsSquare[Num Number](input [][]Num) (is bool, matSize [2]int) {
 	matSize = MatrixSize(input)
