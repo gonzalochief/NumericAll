@@ -2,12 +2,16 @@ package matrix
 
 import (
 	"errors"
+	"fmt"
 
 	"golang.org/x/exp/constraints"
 )
 
 var ErrDivByZero = errors.New("divide by zero")
 var ErrMatSizeMissmatch = errors.New("matrix size missmatch")
+var ErrVecSizeMissmatch = errors.New("vector size missmatch")
+var ErrMatNotCompatible = errors.New("matrices are not compatible")
+var ErrMatNotSquare = errors.New("vector size missmatch")
 
 // Set of all numbers R(real) U C(complex) U i(imaginary)
 type Number interface {
