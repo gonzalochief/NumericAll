@@ -85,3 +85,49 @@ func TestDetFunc(t *testing.T) {
 
 }
 
+type testStrsDetComp struct {
+	TestMatrC128  [][]complex128
+	ExpDetC128    complex128
+	TestMatrC64   [][]complex64
+	ExpDetC64     complex64
+	ExpectedError error
+}
+
+func TestDetFuncCompl(t *testing.T) {
+	testCase := make([]testStrsDetComp, 1)
+	// Test cases: success
+	testCase[0].TestMatrC128 = [][]complex128{
+		{7, 0, (1 + 1i)},
+		{0, 1, (9i)},
+		{(1 - 1i), (-4i), -10},
+	}
+	testCase[0].ExpDetC128 = -324 + 0i
+	testCase[0].TestMatrC64 = [][]complex64{
+		{7, 0, (1 + 1i)},
+		{0, 1, (9i)},
+		{(1 - 1i), (-4i), -10},
+	}
+	testCase[0].ExpDetC64 = -324 + 0i
+	// Test cases: fail - nota a square matrix
+	// Test cases: fail - nota an invertible matrix (singular matrix)
+
+	for _, tc := range testCase {
+		detC128, err := MatrixDetComp(tc.TestMatrC128)
+		if err == nil {
+			if detC128 != tc.ExpDetC128 {
+				t.Errorf("wrong result value, complex128 variable type")
+			}
+		} else if !errors.Is(err, tc.ExpectedError) {
+			t.Errorf("failed to detect error, complex128 variable type")
+		}
+		detC64, err := MatrixDetComp(tc.TestMatrC64)
+		if err == nil {
+			if detC64 != tc.ExpDetC64 {
+				t.Errorf("wrong result value, complex128 variable type")
+			}
+		} else if !errors.Is(err, tc.ExpectedError) {
+			t.Errorf("failed to detect error, complex128 variable type")
+		}
+	}
+
+}
